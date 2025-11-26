@@ -7,6 +7,7 @@ export interface RSVPData {
   dietary?: string;
   partyLevel: number;
   tshirtSize: string;
+  notes?: string;
   wonGame: boolean;
 }
 

@@ -31,6 +31,7 @@ export const sendRSVP = async (data: RSVPData): Promise<void> => {
     dietary: data.dietary || 'None',
     party_level: data.attending ? data.partyLevel : 'N/A',
     tshirt_size: data.tshirtSize,
+    notes: data.notes || 'None',
     won_game: data.wonGame ? 'Yes 🎰' : 'No'
   }
 

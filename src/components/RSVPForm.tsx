@@ -16,6 +16,7 @@ export default function RSVPForm({ wonGame, onSubmit }: RSVPFormProps) {
   const [dietary, setDietary] = useState('')
   const [partyLevel, setPartyLevel] = useState(7)
   const [tshirtSize, setTshirtSize] = useState('')
+  const [notes, setNotes] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -62,6 +63,7 @@ export default function RSVPForm({ wonGame, onSubmit }: RSVPFormProps) {
       dietary: attending ? (dietary.trim() || undefined) : undefined,
       partyLevel: attending ? partyLevel : 0,
       tshirtSize: attending ? tshirtSize : 'N/A',
+      notes: notes.trim() || undefined,
       wonGame
     }
 
@@ -263,6 +265,24 @@ export default function RSVPForm({ wonGame, onSubmit }: RSVPFormProps) {
               </div>
             </div>
           </>
+        )}
+
+        {/* Notes - show for both attending and not attending */}
+        {attending !== null && (
+          <div>
+            <label className="block text-sm font-medium text-muted mb-2">
+              Notes / Questions (optional)
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-white text-base
+                         focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold
+                         transition-colors resize-none"
+              placeholder="Any extra info, questions, or travel plans..."
+            />
+          </div>
         )}
 
         {/* Show message if declining */}
