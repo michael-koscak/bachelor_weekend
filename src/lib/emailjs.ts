@@ -26,9 +26,10 @@ export const sendRSVP = async (data: RSVPData): Promise<void> => {
     from_email: data.email,
     reply_to: data.email,
     phone: data.phone || 'Not provided',
-    dates: data.dates.join(', '),
+    attending: data.attending ? '✅ YES - I\'m coming!' : '❌ NO - Can\'t make it',
+    dates: data.attending ? data.dates.join(', ') : 'N/A',
     dietary: data.dietary || 'None',
-    party_level: data.partyLevel,
+    party_level: data.attending ? data.partyLevel : 'N/A',
     tshirt_size: data.tshirtSize,
     won_game: data.wonGame ? 'Yes 🎰' : 'No'
   }

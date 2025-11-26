@@ -2,6 +2,7 @@ export interface RSVPData {
   name: string;
   email: string;
   phone?: string;
+  attending: boolean;
   dates: string[];
   dietary?: string;
   partyLevel: number;
