@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import confetti from 'canvas-confetti'
 import Reel from './Reel'
-import { SYMBOLS, Symbol, SPIN_SEQUENCE } from '../types'
+import { Symbol, SPIN_SEQUENCE } from '../types'
 import { playSpinSound, playWinSound } from '../lib/sounds'
 
 interface SlotMachineProps {
@@ -39,7 +39,7 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
     setCurrentSpin(prev => prev + 1)
   }, [isSpinning, currentSpin, hasWon])
 
-  const handleReelStop = useCallback((index: number) => {
+  const handleReelStop = useCallback((_index: number) => {
     stoppedReelsRef.current += 1
     
     if (stoppedReelsRef.current === 3) {
