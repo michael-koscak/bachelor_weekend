@@ -32,6 +32,18 @@ export const playSpinSound = () => {
   }
 }
 
+export const playDangitSound = () => {
+  try {
+    const audio = new Audio('/dangit.wav')
+    audio.volume = 0.5
+    audio.play().catch(() => {
+      // Audio play failed - that's ok
+    })
+  } catch (e) {
+    // Audio not available, fail silently
+  }
+}
+
 export const playWinSound = () => {
   try {
     const ctx = getAudioContext()

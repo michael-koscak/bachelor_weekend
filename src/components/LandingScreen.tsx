@@ -1,8 +1,23 @@
+import { useEffect } from 'react'
+
 interface LandingScreenProps {
   onStart: () => void
 }
 
 export default function LandingScreen({ onStart }: LandingScreenProps) {
+  useEffect(() => {
+    // Play load sound with 0.3s delay
+    const timer = setTimeout(() => {
+      const audio = new Audio('/load.wav')
+      audio.volume = 0.5
+      audio.play().catch(() => {
+        // Audio autoplay blocked - that's ok
+      })
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <div className="text-center fade-up max-w-[500px] w-full">
       <h1 className="font-outfit font-extrabold text-5xl md:text-7xl uppercase tracking-wider text-gold mb-4 drop-shadow-lg">

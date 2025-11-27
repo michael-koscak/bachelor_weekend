@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import confetti from 'canvas-confetti'
 import Reel from './Reel'
 import { Symbol, SPIN_SEQUENCE } from '../types'
-import { playSpinSound, playWinSound } from '../lib/sounds'
+import { playSpinSound, playWinSound, playDangitSound } from '../lib/sounds'
 
 interface SlotMachineProps {
   onGameEnd: (won: boolean) => void
@@ -113,6 +113,11 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
         onGameEnd(true)
       }, 4000)
     } else {
+      // Play dangit sound on non-winning spins (not the final spin)
+      if (currentSpin < MAX_SPINS) {
+        playDangitSound()
+      }
+
       // Check for near miss (2 matching)
       if (r1 === r2 || r2 === r3 || r1 === r3) {
         setMessage('🔥 SO CLOSE! 🔥')
