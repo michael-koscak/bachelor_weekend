@@ -11,7 +11,7 @@ export default function SuccessScreen({ data, onPlayAgain }: SuccessScreenProps)
       {/* Animated Checkmark */}
       <div className="mb-6">
         <svg 
-          className={`w-24 h-24 mx-auto ${data.attending ? 'text-electric-green' : 'text-gold'}`}
+          className="w-24 h-24 mx-auto text-electric-green"
           viewBox="0 0 100 100"
         >
           <circle
@@ -49,10 +49,10 @@ export default function SuccessScreen({ data, onPlayAgain }: SuccessScreenProps)
       </div>
 
       <h2 className="font-outfit font-bold text-3xl md:text-4xl uppercase tracking-wide text-gold mb-2">
-        {data.attending ? "You're Locked In" : "Response Recorded"}
+        You're Locked In
       </h2>
       <p className="text-xl text-white mb-8">
-        {data.attending ? "The bag awaits. 💰" : "We'll miss you! 😢"}
+        The bag awaits. 💰
       </p>
 
       {/* Summary Card */}
@@ -66,40 +66,29 @@ export default function SuccessScreen({ data, onPlayAgain }: SuccessScreenProps)
             <span className="text-muted">Name</span>
             <span className="text-white font-medium">{data.name}</span>
           </div>
-
-          <div className="flex justify-between items-center py-2 border-b border-zinc-800">
-            <span className="text-muted">Attending</span>
-            <span className={data.attending ? 'text-electric-green font-bold' : 'text-red-400'}>
-              {data.attending ? '✓ Yes!' : '✗ No'}
+          
+          <div className="flex justify-between items-start py-2 border-b border-zinc-800">
+            <span className="text-muted">Dates</span>
+            <span className="text-white font-medium text-right max-w-[200px]">
+              {data.dates.map(d => d.replace(/, /g, '\n')).join('\n')}
             </span>
           </div>
+
+          <div className="flex justify-between items-center py-2 border-b border-zinc-800">
+            <span className="text-muted">T-Shirt Size</span>
+            <span className="text-white font-medium">{data.tshirtSize}</span>
+          </div>
           
-          {data.attending && (
-            <>
-              <div className="flex justify-between items-start py-2 border-b border-zinc-800">
-                <span className="text-muted">Dates</span>
-                <span className="text-white font-medium text-right max-w-[200px]">
-                  {data.dates.map(d => d.replace(/, /g, '\n')).join('\n')}
-                </span>
-              </div>
+          <div className="flex justify-between items-center py-2 border-b border-zinc-800">
+            <span className="text-muted">Party Level</span>
+            <span className="text-electric-green font-bold">{data.partyLevel}/10</span>
+          </div>
 
-              <div className="flex justify-between items-center py-2 border-b border-zinc-800">
-                <span className="text-muted">T-Shirt Size</span>
-                <span className="text-white font-medium">{data.tshirtSize}</span>
-              </div>
-              
-              <div className="flex justify-between items-center py-2 border-b border-zinc-800">
-                <span className="text-muted">Party Level</span>
-                <span className="text-electric-green font-bold">{data.partyLevel}/10</span>
-              </div>
-
-              {data.wonGame && (
-                <div className="flex justify-between items-center py-2 border-b border-zinc-800">
-                  <span className="text-muted">Slots Winner</span>
-                  <span className="text-gold">🎰 Yes!</span>
-                </div>
-              )}
-            </>
+          {data.wonGame && (
+            <div className="flex justify-between items-center py-2 border-b border-zinc-800">
+              <span className="text-muted">Slots Winner</span>
+              <span className="text-gold">🎰 Yes!</span>
+            </div>
           )}
         </div>
 

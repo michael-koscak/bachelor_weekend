@@ -169,7 +169,7 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
                 key={index}
                 targetSymbol={reelResults[index]}
                 isSpinning={isSpinning}
-                stopDelay={1000 + index * 300}
+                stopDelay={2000 + index * 300}
                 onStop={() => handleReelStop(index)}
                 isWinning={winningReels[index]}
               />
