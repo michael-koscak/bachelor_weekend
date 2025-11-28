@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import confetti from 'canvas-confetti'
 import Reel from './Reel'
 import { Symbol, SPIN_SEQUENCE } from '../types'
-import { playSpinSound, playWinSound, playDangitSound } from '../lib/sounds'
+import { playSpinSound, playWinSound, playLoserSound } from '../lib/sounds'
 
 interface SlotMachineProps {
   onGameEnd: (won: boolean) => void
@@ -40,7 +40,13 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
     setMessage(null)
     setWinningReels([false, false, false])
     
-    playSpinSound()
+    // Play different sound for losing spins vs winning spin
+    const isLastSpin = currentSpin === MAX_SPINS - 1
+    if (isLastSpin) {
+      playSpinSound() // Final spin uses spin.wav (2.8s)
+    } else {
+      playLoserSound() // Losing spins use loser.wav (2.6s combined)
+    }
 
     // Use predetermined spin sequence
     const results = SPIN_SEQUENCE[currentSpin]
@@ -122,11 +128,6 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
         onGameEnd(true)
       }, 4000)
     } else {
-      // Play dangit sound on non-winning spins (not the final spin)
-      if (currentSpin < MAX_SPINS) {
-        playDangitSound()
-      }
-
       // Check for near miss (2 matching)
       if (r1 === r2 || r2 === r3 || r1 === r3) {
         setMessage('🔥 SO CLOSE! 🔥')
@@ -173,16 +174,21 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
         <div className="bg-background rounded-xl p-4 md:p-6">
           {/* Reels Container */}
           <div className="flex gap-2 md:gap-3 mb-4">
-            {[0, 1, 2].map((index) => (
-              <Reel
-                key={index}
-                targetSymbol={reelResults[index]}
-                isSpinning={isSpinning}
-                stopDelay={2000 + index * 300}
-                onStop={() => handleReelStop(index)}
-                isWinning={winningReels[index]}
-              />
-            ))}
+            {[0, 1, 2].map((index) => {
+              // Losing spins (1-4): 2.6s total, winning spin (5): 2.8s total
+              const isLastSpin = currentSpin === MAX_SPINS
+              const baseDelay = isLastSpin ? 2000 : 1800
+              return (
+                <Reel
+                  key={index}
+                  targetSymbol={reelResults[index]}
+                  isSpinning={isSpinning}
+                  stopDelay={baseDelay + index * 300}
+                  onStop={() => handleReelStop(index)}
+                  isWinning={winningReels[index]}
+                />
+              )
+            })}
           </div>
 
           {/* Message Display */}

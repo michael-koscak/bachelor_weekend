@@ -1,3 +1,5 @@
+import { playLoadSound } from '../lib/sounds'
+
 interface LandingScreenProps {
   onStart: () => void
 }
@@ -5,11 +7,7 @@ interface LandingScreenProps {
 export default function LandingScreen({ onStart }: LandingScreenProps) {
   const handleStart = () => {
     // Play load sound on button click (works because it's user-initiated)
-    const audio = new Audio('/load.wav')
-    audio.volume = 0.5
-    audio.play().catch(() => {
-      // Audio play failed - that's ok
-    })
+    playLoadSound()
     
     // Start the game
     onStart()
