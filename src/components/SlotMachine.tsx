@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import confetti from 'canvas-confetti'
 import Reel from './Reel'
 import { Symbol, SPIN_SEQUENCE } from '../types'
@@ -13,6 +13,7 @@ const MAX_SPINS = 5
 export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
   const [currentSpin, setCurrentSpin] = useState(0)
   const [isSpinning, setIsSpinning] = useState(false)
+  const [isReady, setIsReady] = useState(false)
   const [reelResults, setReelResults] = useState<Symbol[]>(['💰', '💰', '💰'])
   const [message, setMessage] = useState<string | null>(null)
   const [hasWon, setHasWon] = useState(false)
@@ -22,6 +23,14 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
   const stoppedReelsRef = useRef(0)
 
   const spinsLeft = MAX_SPINS - currentSpin
+
+  // Delay spin button availability for 1.5s to let load sound play
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const spin = useCallback(() => {
     if (isSpinning || currentSpin >= MAX_SPINS || hasWon) return
@@ -194,17 +203,19 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
           {/* Spin Button */}
           <button
             onClick={spin}
-            disabled={isSpinning || hasWon || spinsLeft <= 0}
+            disabled={!isReady || isSpinning || hasWon || spinsLeft <= 0}
             className={`
               w-full py-4 rounded-xl font-outfit font-bold text-xl uppercase tracking-wide
-              transition-all duration-200 min-h-[56px]
-              ${isSpinning || hasWon || spinsLeft <= 0
-                ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-gold via-yellow-500 to-gold text-black hover:scale-[1.02] active:scale-[0.98] gold-glow'
+              transition-all duration-300 min-h-[56px]
+              ${!isReady
+                ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed opacity-50'
+                : isSpinning || hasWon || spinsLeft <= 0
+                  ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-gold via-yellow-500 to-gold text-black hover:scale-[1.02] active:scale-[0.98] gold-glow animate-pulse'
               }
             `}
           >
-            {isSpinning ? 'Spinning...' : hasWon ? '🎉 You Won!' : 'SPIN'}
+            {!isReady ? '...' : isSpinning ? 'Spinning...' : hasWon ? '🎉 You Won!' : 'SPIN'}
           </button>
 
           {/* Spins Counter */}
