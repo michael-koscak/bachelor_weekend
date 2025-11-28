@@ -1,22 +1,19 @@
-import { useEffect } from 'react'
-
 interface LandingScreenProps {
   onStart: () => void
 }
 
 export default function LandingScreen({ onStart }: LandingScreenProps) {
-  useEffect(() => {
-    // Play load sound with 0.3s delay
-    const timer = setTimeout(() => {
-      const audio = new Audio('/load.wav')
-      audio.volume = 0.5
-      audio.play().catch(() => {
-        // Audio autoplay blocked - that's ok
-      })
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [])
+  const handleStart = () => {
+    // Play load sound on button click (works because it's user-initiated)
+    const audio = new Audio('/load.wav')
+    audio.volume = 0.5
+    audio.play().catch(() => {
+      // Audio play failed - that's ok
+    })
+    
+    // Start the game
+    onStart()
+  }
 
   return (
     <div className="text-center fade-up max-w-[500px] w-full">
@@ -38,7 +35,7 @@ export default function LandingScreen({ onStart }: LandingScreenProps) {
       </div>
 
       <button
-        onClick={onStart}
+        onClick={handleStart}
         className="w-full max-w-[320px] mx-auto block bg-gradient-to-r from-gold via-yellow-500 to-gold text-black font-outfit font-bold text-xl uppercase tracking-wide py-4 px-8 rounded-xl gold-glow hover:scale-105 active:scale-95 transition-all duration-200"
       >
         Pull The Lever 🎰
