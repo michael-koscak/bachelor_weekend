@@ -1,72 +1,68 @@
-// Sound effects with preloading for better mobile performance
+// Sound effects with preloading for mobile
 
-// Audio elements cache
-const audioElements: { [key: string]: HTMLAudioElement } = {}
-let audioUnlocked = false
+// Preloaded audio elements (used as templates for cloning)
+const audioCache: { [key: string]: HTMLAudioElement } = {}
+let initialized = false
 
-// Create and preload audio element
-const createAudio = (src: string): HTMLAudioElement => {
-  const audio = new Audio(src)
-  audio.preload = 'auto'
-  audio.load()
-  return audio
-}
-
-// Initialize audio elements
-if (typeof window !== 'undefined') {
-  audioElements.load = createAudio('/load.wav')
-  audioElements.loser = createAudio('/loser.wav')
-  audioElements.spin = createAudio('/spin.wav')
-  audioElements.jackpot = createAudio('/jackpot.wav')
-}
-
-// Unlock audio on mobile - call this on first user interaction
-export const unlockAudio = () => {
-  if (audioUnlocked) return
+// Initialize and preload all audio
+const initAudio = () => {
+  if (initialized || typeof window === 'undefined') return
   
-  // Play and immediately pause all audio to unlock them on mobile
-  Object.values(audioElements).forEach(audio => {
-    audio.volume = 0
-    audio.play().then(() => {
-      audio.pause()
-      audio.currentTime = 0
-      audio.volume = 0.5
-    }).catch(() => {
-      // Ignore errors
-    })
+  const files = ['/load.wav', '/loser.wav', '/spin.wav', '/jackpot.wav']
+  files.forEach(src => {
+    const audio = new Audio(src)
+    audio.preload = 'auto'
+    audio.load()
+    audioCache[src] = audio
   })
   
-  audioUnlocked = true
+  initialized = true
 }
 
-const playSound = (key: string) => {
+// Initialize on module load
+initAudio()
+
+// Unlock audio on mobile - creates silent audio context
+export const unlockAudio = () => {
   try {
-    const audio = audioElements[key]
-    if (audio) {
-      // Reset and play
-      audio.currentTime = 0
-      audio.volume = 0.5
-      audio.play().catch(() => {
-        // Audio play failed - that's ok
-      })
+    // Create and play a silent audio context to unlock mobile audio
+    const AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof window.AudioContext }).webkitAudioContext
+    if (AudioContext) {
+      const ctx = new AudioContext()
+      const buffer = ctx.createBuffer(1, 1, 22050)
+      const source = ctx.createBufferSource()
+      source.buffer = buffer
+      source.connect(ctx.destination)
+      source.start(0)
     }
   } catch (e) {
-    // Audio not available, fail silently
+    // Ignore
   }
 }
 
-export const playLoadSound = () => {
-  playSound('load')
+// Play a sound by cloning the preloaded audio
+const playSound = (src: string, volume = 0.5) => {
+  try {
+    initAudio() // Ensure initialized
+    
+    const cached = audioCache[src]
+    if (cached) {
+      // Clone to allow overlapping plays and avoid state issues
+      const audio = cached.cloneNode() as HTMLAudioElement
+      audio.volume = volume
+      audio.play().catch(() => {})
+    } else {
+      // Fallback: create new audio if not cached
+      const audio = new Audio(src)
+      audio.volume = volume
+      audio.play().catch(() => {})
+    }
+  } catch (e) {
+    // Audio not available
+  }
 }
 
-export const playLoserSound = () => {
-  playSound('loser')
-}
-
-export const playSpinSound = () => {
-  playSound('spin')
-}
-
-export const playWinSound = () => {
-  playSound('jackpot')
-}
+export const playLoadSound = () => playSound('/load.wav')
+export const playLoserSound = () => playSound('/loser.wav')
+export const playSpinSound = () => playSound('/spin.wav')
+export const playWinSound = () => playSound('/jackpot.wav')
