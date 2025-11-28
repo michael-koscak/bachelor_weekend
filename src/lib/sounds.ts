@@ -8,7 +8,7 @@ let initialized = false
 const initAudio = () => {
   if (initialized || typeof window === 'undefined') return
   
-  const files = ['/load.wav', '/loser.wav', '/spin.wav', '/jackpot.wav']
+  const files = ['/load.wav', '/loser.wav', '/jackpot.wav']
   files.forEach(src => {
     const audio = new Audio(src)
     audio.preload = 'auto'
@@ -64,5 +64,4 @@ const playSound = (src: string, volume = 0.5) => {
 
 export const playLoadSound = () => playSound('/load.wav')
 export const playLoserSound = () => playSound('/loser.wav')
-export const playSpinSound = () => playSound('/spin.wav')
 export const playWinSound = () => playSound('/jackpot.wav')

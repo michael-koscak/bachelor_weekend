@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import confetti from 'canvas-confetti'
 import Reel from './Reel'
 import { Symbol, SPIN_SEQUENCE } from '../types'
-import { playSpinSound, playWinSound, playLoserSound } from '../lib/sounds'
+import { playWinSound, playLoserSound } from '../lib/sounds'
 
 interface SlotMachineProps {
   onGameEnd: (won: boolean) => void
@@ -43,7 +43,7 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
     // Play different sound for losing spins vs winning spin
     const isLastSpin = currentSpin === MAX_SPINS - 1
     if (isLastSpin) {
-      playSpinSound() // Final spin uses spin.wav (2.8s)
+      playWinSound() // Final spin uses jackpot.wav (combined spin + win sound)
     } else {
       playLoserSound() // Losing spins use loser.wav (2.6s combined)
     }
@@ -74,7 +74,6 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
       // WIN!
       setHasWon(true)
       setWinningReels([true, true, true])
-      playWinSound()
       setMessage('❤️ BAG SECURED! ❤️')
 
       // Shake screen
