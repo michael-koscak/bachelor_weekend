@@ -187,7 +187,7 @@ export default function SlotMachine({ onGameEnd }: SlotMachineProps) {
 
           {/* Message Display */}
           <div className="h-8 flex items-center justify-center mb-4">
-            {message && (
+            {message && !showWinScreen && (
               <p className={`font-outfit font-bold text-lg uppercase tracking-wide ${
                 message.includes('BAG SECURED') 
                   ? 'text-electric-green animate-pulse' 
