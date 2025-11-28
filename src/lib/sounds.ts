@@ -1,53 +1,72 @@
 // Sound effects with preloading for better mobile performance
 
-// Preload audio files
-const audioCache: { [key: string]: HTMLAudioElement } = {}
+// Audio elements cache
+const audioElements: { [key: string]: HTMLAudioElement } = {}
+let audioUnlocked = false
 
-const preloadAudio = (src: string): HTMLAudioElement => {
-  if (!audioCache[src]) {
-    const audio = new Audio(src)
-    audio.preload = 'auto'
-    // Load the audio
-    audio.load()
-    audioCache[src] = audio
-  }
-  return audioCache[src]
+// Create and preload audio element
+const createAudio = (src: string): HTMLAudioElement => {
+  const audio = new Audio(src)
+  audio.preload = 'auto'
+  audio.load()
+  return audio
 }
 
-// Preload all sounds on module load
+// Initialize audio elements
 if (typeof window !== 'undefined') {
-  preloadAudio('/load.wav')
-  preloadAudio('/loser.wav')
-  preloadAudio('/spin.wav')
-  preloadAudio('/jackpot.wav')
+  audioElements.load = createAudio('/load.wav')
+  audioElements.loser = createAudio('/loser.wav')
+  audioElements.spin = createAudio('/spin.wav')
+  audioElements.jackpot = createAudio('/jackpot.wav')
 }
 
-const playSound = (src: string, volume = 0.5) => {
-  try {
-    // Clone the cached audio to allow overlapping plays
-    const cached = preloadAudio(src)
-    const audio = cached.cloneNode() as HTMLAudioElement
-    audio.volume = volume
-    audio.play().catch(() => {
-      // Audio play failed - that's ok
+// Unlock audio on mobile - call this on first user interaction
+export const unlockAudio = () => {
+  if (audioUnlocked) return
+  
+  // Play and immediately pause all audio to unlock them on mobile
+  Object.values(audioElements).forEach(audio => {
+    audio.volume = 0
+    audio.play().then(() => {
+      audio.pause()
+      audio.currentTime = 0
+      audio.volume = 0.5
+    }).catch(() => {
+      // Ignore errors
     })
+  })
+  
+  audioUnlocked = true
+}
+
+const playSound = (key: string) => {
+  try {
+    const audio = audioElements[key]
+    if (audio) {
+      // Reset and play
+      audio.currentTime = 0
+      audio.volume = 0.5
+      audio.play().catch(() => {
+        // Audio play failed - that's ok
+      })
+    }
   } catch (e) {
     // Audio not available, fail silently
   }
 }
 
 export const playLoadSound = () => {
-  playSound('/load.wav')
+  playSound('load')
 }
 
 export const playLoserSound = () => {
-  playSound('/loser.wav')
+  playSound('loser')
 }
 
 export const playSpinSound = () => {
-  playSound('/spin.wav')
+  playSound('spin')
 }
 
 export const playWinSound = () => {
-  playSound('/jackpot.wav')
+  playSound('jackpot')
 }

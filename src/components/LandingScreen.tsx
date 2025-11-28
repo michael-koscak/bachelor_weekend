@@ -1,4 +1,4 @@
-import { playLoadSound } from '../lib/sounds'
+import { playLoadSound, unlockAudio } from '../lib/sounds'
 
 interface LandingScreenProps {
   onStart: () => void
@@ -6,6 +6,9 @@ interface LandingScreenProps {
 
 export default function LandingScreen({ onStart }: LandingScreenProps) {
   const handleStart = () => {
+    // Unlock all audio on mobile with first tap
+    unlockAudio()
+    
     // Play load sound on button click (works because it's user-initiated)
     playLoadSound()
     
